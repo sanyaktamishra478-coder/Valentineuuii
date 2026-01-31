@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Step, ValentineState } from './types';
 import HeartsBackground from './components/HeartsBackground';
 import { generateValentineMessage } from './services/geminiService';
@@ -13,8 +13,6 @@ const App: React.FC = () => {
     aiMessage: '',
     isLoading: false,
   });
-  
-  const [showCopied, setShowCopied] = useState(false);
 
   const noPhrases = [
     "No",
@@ -59,14 +57,6 @@ const App: React.FC = () => {
     }
   };
 
-  const handleShare = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url).then(() => {
-      setShowCopied(true);
-      setTimeout(() => setShowCopied(false), 2000);
-    });
-  };
-
   const renderContent = () => {
     switch (state.step) {
       case Step.INITIAL:
@@ -76,6 +66,7 @@ const App: React.FC = () => {
               Hey! I made something for you<br />do you wanna see???
             </h1>
             <div className="relative mb-12">
+               {/* Cute cat image as requested */}
               <img 
                 src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1NHN4ZHFpMXR1Y2N4dnB5ZHB2Mjh3bnY4emZleWVqYXFicGljbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MDJ9IbxxvDUQM/giphy.gif" 
                 alt="Cute Cat" 
@@ -148,7 +139,7 @@ const App: React.FC = () => {
         return (
           <div className="flex flex-col items-center text-center max-w-lg mx-auto animate-in fade-in zoom-in duration-700">
             <h1 className="text-4xl md:text-6xl font-bold text-pink-600 mb-6">YAYYY! 🎉</h1>
-            <div className="mb-8 p-6 bg-white rounded-3xl shadow-inner border-2 border-pink-100 relative w-full">
+            <div className="mb-8 p-6 bg-white rounded-3xl shadow-inner border-2 border-pink-100 relative">
                <div className="absolute -top-6 -right-6">
                  <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHN0NHBnd3R3ZHFpMXR1Y2N4dnB5ZHB2Mjh3bnY4emZleWVqYXFicGljbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/l41lTfuxV5wun9eG4/giphy.gif" alt="heart" className="w-12" />
                </div>
@@ -161,22 +152,12 @@ const App: React.FC = () => {
               alt="Happy cat" 
               className="w-72 rounded-2xl shadow-xl mb-8"
             />
-            
-            <div className="flex flex-col gap-4 items-center">
-              <button
-                onClick={handleShare}
-                className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all flex items-center gap-2"
-              >
-                <span>{showCopied ? "Link Copied! 💝" : "Share the Love 💌"}</span>
-              </button>
-              
-              <button 
-                onClick={() => setState(prev => ({ ...prev, step: Step.INITIAL, noCount: 0, yesScale: 1, noScale: 1 }))}
-                className="text-pink-400 hover:text-pink-600 underline font-medium text-sm"
-              >
-                Create your own
-              </button>
-            </div>
+            <button 
+              onClick={() => setState(prev => ({ ...prev, step: Step.INITIAL, noCount: 0, yesScale: 1, noScale: 1 }))}
+              className="text-pink-400 hover:text-pink-600 underline font-medium"
+            >
+              Back to start
+            </button>
           </div>
         );
     }
